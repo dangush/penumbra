@@ -13,7 +13,7 @@ std = ["ark-ff/std"]
 
 [dependencies]
 ark-ff = {workspace = true, default-features = false}
-decaf377 = {workspace = true}
+decaf377 = { git = "https://github.com/hu55a1n1/decaf377.git" }
 hex = {workspace = true}
 rand_core = {workspace = true, features = ["getrandom"]}
 thiserror = {workspace = true}
