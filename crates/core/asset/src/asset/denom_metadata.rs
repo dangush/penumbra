@@ -49,6 +49,7 @@ pub(super) struct Inner {
     display_index: usize,
     name: String,
     symbol: String,
+    coingecko_id: String,
 }
 
 impl DomainType for Metadata {
@@ -68,6 +69,7 @@ impl From<&Inner> for pb::Metadata {
             images: inner.images.clone(),
             badges: inner.badges.clone(),
             priority_score: inner.priority_score,
+            coingecko_id: inner.coingecko_id.clone(),
         }
     }
 }
@@ -135,6 +137,7 @@ impl TryFrom<pb::Metadata> for Inner {
             images: value.images,
             badges: value.badges,
             priority_score: value.priority_score,
+            coingecko_id: value.coingecko_id,
         })
     }
 }
@@ -258,6 +261,7 @@ impl Inner {
             images: Vec::new(),
             badges: Vec::new(),
             priority_score: 0,
+            coingecko_id: String::new(),
         }
     }
 }
@@ -434,6 +438,7 @@ impl Debug for Metadata {
             symbol,
             priority_score,
             badges,
+            coingecko_id,
         } = inner.as_ref();
 
         f.debug_struct("Metadata")
@@ -447,6 +452,7 @@ impl Debug for Metadata {
             .field("display_index", display_index)
             .field("name", name)
             .field("symbol", symbol)
+            .field("coingecko_id", coingecko_id)
             .finish()
     }
 }
