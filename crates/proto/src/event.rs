@@ -17,12 +17,12 @@ pub trait ProtoEvent: Message + Name + Serialize + DeserializeOwned + Sized {
             .expect("serde_json Serialized ProtoEvent should not be empty.")
             .into_iter()
             .map(|(key, v)| {
-                abci::EventAttribute::V037(abci::v0_37::EventAttribute {
-                    value: serde_json::to_string(v)
+                tendermint::abci::EventAttribute::from((
+                    key.to_string(),
+                    serde_json::to_string(v)
                         .expect("must be able to serialize value as JSON"),
-                    key: key.to_string(),
-                    index: true,
-                })
+                    true
+                ))
             })
             .collect();
 
@@ -82,13 +82,9 @@ mod tests {
 
         let abci_spend = proto_spend.into_event();
 
-        let expected_abci_spend = abci::Event::new(
+        let expected_abci_spend = abci::Event::new::<&str, [_; 1]>(
             "penumbra.core.component.shielded_pool.v1.EventSpend",
-            [abci::EventAttribute::V037(abci::v0_37::EventAttribute {
-                key: "nullifier".to_string(),
-                value: "{\"inner\":\"lL6VF1ZxmJFo8o6i6e+JjYyktGKaN6j/o+SzsBoZ29M=\"}".to_string(),
-                index: true,
-            })],
+            [tendermint::abci::EventAttribute::from(("nullifier", "{\"inner\":\"lL6VF1ZxmJFo8o6i6e+JjYyktGKaN6j/o+SzsBoZ29M=\"}", true))],
         );
         assert_eq!(abci_spend, expected_abci_spend);
 
@@ -108,15 +104,9 @@ mod tests {
 
         let abci_output = proto_output.into_event();
 
-        let expected_abci_output = abci::Event::new(
+        let expected_abci_output = abci::Event::new::<&str, [_; 1]>(
             "penumbra.core.component.shielded_pool.v1.EventOutput",
-            [abci::EventAttribute::V037(abci::v0_37::EventAttribute {
-                // note: attribute keys become camelCase because ProtoJSON...
-                key: "noteCommitment".to_string(),
-                // note: attribute values are JSON objects, potentially nested as here
-                value: "{\"inner\":\"lL6VF1ZxmJFo8o6i6e+JjYyktGKaN6j/o+SzsBoZ29M=\"}".to_string(),
-                index: true,
-            })],
+            [tendermint::abci::EventAttribute::from(("noteCommitment", "{\"inner\":\"lL6VF1ZxmJFo8o6i6e+JjYyktGKaN6j/o+SzsBoZ29M=\"}", true))],
         );
         assert_eq!(abci_output, expected_abci_output);
 
