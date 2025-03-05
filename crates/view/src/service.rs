@@ -417,6 +417,8 @@ impl ViewService for ViewServer {
     >;
     type AuctionsStream =
         Pin<Box<dyn futures::Stream<Item = Result<pb::AuctionsResponse, tonic::Status>> + Send>>;
+    type LatestSwapsStream =
+        Pin<Box<dyn futures::Stream<Item = Result<pb::LatestSwapsResponse, tonic::Status>> + Send>>;
 
     #[instrument(skip_all, level = "trace")]
     async fn auctions(
@@ -1057,6 +1059,7 @@ impl ViewService for ViewServer {
 
         // Finally, compute the full TxV from the full TxP:
         let txv = tx.view_from_perspective(&txp);
+        let summary = txv.summary();
 
         let response = pb::TransactionInfoByHashResponse {
             tx_info: Some(pb::TransactionInfo {
@@ -1065,6 +1068,7 @@ impl ViewService for ViewServer {
                 perspective: Some(txp.into()),
                 transaction: Some(tx.into()),
                 view: Some(txv.into()),
+                summary: Some(summary.into()),
             }),
         };
 
@@ -1859,6 +1863,14 @@ impl ViewService for ViewServer {
         _request: tonic::Request<pb::UnbondingTokensByAddressIndexRequest>,
     ) -> Result<tonic::Response<Self::UnbondingTokensByAddressIndexStream>, tonic::Status> {
         unimplemented!("unbonding_tokens_by_address_index currently only implemented on web")
+    }
+
+    #[instrument(skip_all, level = "trace")]
+    async fn latest_swaps(
+        &self,
+        _request: tonic::Request<pb::LatestSwapsRequest>,
+    ) -> Result<tonic::Response<Self::LatestSwapsStream>, tonic::Status> {
+        unimplemented!("latest_swaps currently only implemented on web")
     }
 }
 

@@ -5,12 +5,15 @@ set -euo pipefail
 
 # Fail fast if network dir exists, otherwise `cargo run ...` will block
 # for a while, masking the error.
-if [[ -d ~/.penumbra/network_data ]] ; then
-    >&2 echo "ERROR: network data directory exists at ~/.penumbra/network_data"
-    >&2 echo "Not removing this directory automatically; to remove, run: pd network unsafe-reset-all"
-    exit 1
-fi
+#
+# If any network data is present, we shouldn't reuse it: the smoke tests assume
+# a fresh devnet has been created specifically for the test run. In the future
+# we should make this a temp dir so it can always run regardless of pre-existing state.
+repo_root="$(git rev-parse --show-toplevel)"
+"${repo_root}/deployments/scripts/warn-about-pd-state"
 
+# Check for dependencies. All of these will be installed automatically
+# as part of the nix env.
 if ! hash cometbft > /dev/null 2>&1 ; then
     >&2 echo "ERROR: cometbft not found in PATH"
     >&2 echo "See install guide: https://guide.penumbra.zone/main/pd/build.html"
@@ -29,20 +32,32 @@ if ! hash grpcurl > /dev/null 2>&1 ; then
     exit 1
 fi
 
-# Check for interactive terminal session, enable TUI if yes.
-if [[ -t 1 ]] ; then
-    use_tui="true"
-else
-    use_tui="false"
-fi
+>&2 echo "Building all test targets before running smoke tests..."
+# We want a warm cache before the tests run
+cargo build --release --bins
 
-repo_root="$(git rev-parse --show-toplevel)"
-# Override the pc API port 8080 -> 9191, to avoid conflict with pd.
-if ! process-compose --config deployments/compose/process-compose-smoke-test.yml --port 9191 -t="$use_tui" ; then
-    >&2 echo "ERROR: smoke tests failed"
-    >&2 echo "Review logs in: deployments/logs/smoke-*.log"
-    find "${repo_root}/deployments/logs/smoke-"*".log" | sort >&2
-    exit 1
-else
-    echo "SUCCESS! Smoke test complete."
-fi
+smoke_test_dir="${repo_root:?}/deployments/.smoke-test-state"
+rm -rf "$smoke_test_dir"
+mkdir -p "$smoke_test_dir"
+
+# Reuse existing dev-env script
+"${repo_root}/deployments/scripts/run-local-devnet.sh" \
+    --config ./deployments/compose/process-compose-metrics.yml \
+    --config ./deployments/compose/process-compose-dev-tooling.yml \
+    --config ./deployments/compose/process-compose-postgres.yml \
+    --detached
+
+# Wait a bit for network to start.
+sleep 10
+
+# Ensure that process-compose environment gets cleaned up, even if tests error.
+trap 'process-compose down --port 8888' EXIT
+
+# Run the integration tests. Using `just` targets so that the exact
+# invocations are easily reusable on the CLI in dev loops.
+just integration-pclientd
+just integration-pcli
+# The pd tests come later, as they need work to have been performed for metrics to be emitted.
+just integration-pd
+# Finally, pindexer tests, to make assertions about emitted events.
+just integration-pindexer

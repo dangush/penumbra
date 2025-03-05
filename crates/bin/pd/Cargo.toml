@@ -53,7 +53,7 @@ ics23                            = { workspace = true }
 jmt                              = { workspace = true }
 metrics                          = { workspace = true }
 metrics-exporter-prometheus      = { workspace = true }
-metrics-process                  = "2.0.0"
+metrics-process                  = "2.4.0"
 metrics-tracing-context          = { workspace = true }
 metrics-util                     = "0.18.0"
 mime_guess                       = "2"
@@ -61,7 +61,7 @@ once_cell                        = { workspace = true }
 pbjson-types                     = { workspace = true }
 penumbra-sdk-app                     = { workspace = true, default-features = true }
 penumbra-sdk-asset                   = { workspace = true, default-features = true }
-penumbra-sdk-auto-https              = { version = "1.0.0", path = "../../util/auto-https" }
+penumbra-sdk-auto-https              = { version = "1.1.0", path = "../../util/auto-https" }
 penumbra-sdk-compact-block           = { workspace = true, default-features = true }
 penumbra-sdk-custody                 = { workspace = true }
 penumbra-sdk-auction                 = { workspace = true, features = ["parallel"], default-features = true }
@@ -76,7 +76,7 @@ penumbra-sdk-sct                     = { workspace = true, default-features = tr
 penumbra-sdk-shielded-pool           = { workspace = true, features = ["parallel"], default-features = true }
 penumbra-sdk-stake                   = { workspace = true, features = ["parallel"], default-features = true }
 penumbra-sdk-tct                     = { workspace = true, default-features = true }
-penumbra-sdk-tendermint-proxy        = { version = "1.0.0", path = "../../util/tendermint-proxy" }
+penumbra-sdk-tendermint-proxy        = { version = "1.1.0", path = "../../util/tendermint-proxy" }
 penumbra-sdk-tower-trace             = { workspace = true }
 penumbra-sdk-transaction             = { workspace = true, default-features = true }
 pin-project                      = { workspace = true }
@@ -127,3 +127,4 @@ assert_cmd = { workspace = true }
 predicates = "2.1"
 prost-reflect = "0.14.3"
 regex = { workspace = true }
+rstest = { workspace = true }

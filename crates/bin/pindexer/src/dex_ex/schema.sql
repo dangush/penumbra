@@ -209,6 +209,45 @@ CREATE INDEX ON dex_ex_batch_swap_traces (time, height);
 CREATE INDEX ON dex_ex_batch_swap_traces (asset_start, asset_end);
 -- TODO(erwan): We can add a GIN index on the position id later.
 
+-- A summary of block data with a bias for DEX data.
+CREATE TABLE IF NOT EXISTS dex_ex_block_summary (
+    -- Primary key
+    rowid SERIAL PRIMARY KEY,
+    -- The height of the block.
+    height INTEGER NOT NULL,
+    -- The timestamp for the block.
+    time TIMESTAMPTZ NOT NULL,
+    -- A list of batch swap summaries that occurred in this block.
+    batch_swaps jsonb NOT NULL,
+    -- The number of opened LPs in this block.
+    num_open_lps     INTEGER NOT NULL,
+    -- The number of closed LPs in this block.
+    num_closed_lps   INTEGER NOT NULL,
+    -- The number of withdrawn LPs in this block.
+    num_withdrawn_lps INTEGER NOT NULL,
+    -- The number of swaps in this block.
+    num_swaps        INTEGER NOT NULL,
+    -- The number of swap claims in this block.
+    num_swap_claims  INTEGER NOT NULL,
+    -- The number of transactions in this block.
+    num_txs          INTEGER NOT NULL
+);
+
+CREATE INDEX ON dex_ex_block_summary (time, height);
+
+CREATE TABLE IF NOT EXISTS dex_ex_transactions (
+  -- The unique identifier of the transaction
+  transaction_id BYTEA NOT NULL PRIMARY KEY,
+  -- The raw transaction bytes
+  transaction BYTEA NOT NULL,
+  -- The block height at which this transaction was included
+  height INTEGER NOT NULL,
+  -- The timestamp when this transaction was included in a block
+  time TIMESTAMPTZ NOT NULL
+);
+
+CREATE INDEX ON dex_ex_transactions (time, height);
+
 ALTER TABLE dex_ex_position_executions
   ADD CONSTRAINT fk_position_executions
   FOREIGN KEY (position_id) REFERENCES dex_ex_position_state(position_id);

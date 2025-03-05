@@ -1337,7 +1337,7 @@ dependencies = [
 
 [[package]]
 name = "cnidarium-component"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1375,17 +1375,19 @@ dependencies = [
 
 [[package]]
 name = "cometindex"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
  "clap",
  "futures",
  "hex",
+ "prost 0.13.4",
  "serde_json",
  "sqlx",
  "tap",
  "tendermint 0.40.1",
+ "tendermint-proto 0.40.1",
  "tokio",
  "tracing",
  "tracing-subscriber 0.3.19",
@@ -1781,7 +1783,7 @@ dependencies = [
 
 [[package]]
 name = "decaf377-fmd"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "ark-ff",
  "ark-serialize",
@@ -1796,7 +1798,7 @@ dependencies = [
 
 [[package]]
 name = "decaf377-frost"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -1811,7 +1813,7 @@ dependencies = [
 
 [[package]]
 name = "decaf377-ka"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "ark-ff",
  "decaf377 0.10.1 (git+https://github.com/hu55a1n1/decaf377.git)",
@@ -2477,6 +2479,12 @@ name = "futures-task"
 version = "0.3.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f90f7dce0722e95104fcb095585910c0977252f286e354b5e3bd38902cd99988"
+
+[[package]]
+name = "futures-timer"
+version = "3.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f288b0a4f20f9a56b5d1da57e2227c661b7b16168e2f72365f57b63326e29b24"
 
 [[package]]
 name = "futures-util"
@@ -4350,6 +4358,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08d65885ee38876c4f86fa503fb49d7b507c2b62552df7c70b2fce627e06381"
 
 [[package]]
+name = "openapiv3"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cc02deea53ffe807708244e5914f6b099ad7015a207ee24317c22112e17d9c5c"
+dependencies = [
+ "indexmap 2.7.1",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "openssl"
 version = "0.10.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4558,7 +4577,7 @@ dependencies = [
 
 [[package]]
 name = "pcli"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -4642,7 +4661,7 @@ dependencies = [
 
 [[package]]
 name = "pclientd"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -4695,7 +4714,7 @@ dependencies = [
 
 [[package]]
 name = "pd"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -4764,8 +4783,9 @@ dependencies = [
  "rand_chacha",
  "rand_core",
  "regex",
- "reqwest 0.12.12",
+ "reqwest 0.12.9",
  "rocksdb",
+ "rstest",
  "rustls 0.23.21",
  "serde",
  "serde_json",
@@ -4850,7 +4870,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-app"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -4931,7 +4951,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-app-tests"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5021,7 +5041,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-asset"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5061,7 +5081,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-auction"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5116,7 +5136,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-auto-https"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "axum-server",
@@ -5128,7 +5148,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-bench"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-bls12-377",
@@ -5163,7 +5183,7 @@ dependencies = [
  "rand",
  "rand_core",
  "regex",
- "reqwest 0.12.12",
+ "reqwest 0.12.9",
  "serde",
  "serde_json",
  "sha2 0.10.8",
@@ -5172,7 +5192,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-community-pool"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5204,7 +5224,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-compact-block"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5239,7 +5259,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-custody"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "argon2",
@@ -5275,7 +5295,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-dex"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5337,7 +5357,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-distributions"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -5355,7 +5375,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-eddy"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5373,7 +5393,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-fee"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5400,7 +5420,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-funding"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -5423,7 +5443,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-governance"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5477,7 +5497,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-ibc"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5514,7 +5534,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-keys"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "aes",
  "anyhow",
@@ -5561,7 +5581,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-measure"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -5583,7 +5603,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-mock-client"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "cnidarium",
@@ -5600,7 +5620,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-mock-consensus"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "bytes",
@@ -5620,7 +5640,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-mock-tendermint-proxy"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "hex",
  "pbjson-types",
@@ -5635,7 +5655,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-num"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5672,7 +5692,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-parameter-setup"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "ark-groth16",
  "ark-serialize",
@@ -5689,7 +5709,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-proof-params"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ec",
@@ -5708,7 +5728,7 @@ dependencies = [
  "rand",
  "rand_core",
  "regex",
- "reqwest 0.12.12",
+ "reqwest 0.12.9",
  "serde",
  "serde_json",
  "sha2 0.10.8",
@@ -5717,7 +5737,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-proof-setup"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ec",
@@ -5744,7 +5764,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-proto"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -5779,7 +5799,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-sct"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5815,7 +5835,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-shielded-pool"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5869,7 +5889,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-stake"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5922,7 +5942,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tct"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "ark-ed-on-bls12-377",
  "ark-ff",
@@ -5954,7 +5974,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tct-property-test"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "futures",
@@ -5966,7 +5986,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tct-visualize"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -5997,7 +6017,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tendermint-proxy"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "chrono",
@@ -6029,7 +6049,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-test-subscriber"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "tracing",
  "tracing-subscriber 0.3.19",
@@ -6037,7 +6057,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tower-trace"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "futures",
  "hex",
@@ -6058,7 +6078,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-transaction"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6113,7 +6133,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-txhash"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "blake2b_simd 1.0.2",
@@ -6126,7 +6146,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-view"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-std",
@@ -6185,7 +6205,7 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-wallet"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-std",
@@ -6271,13 +6291,15 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "pindexer"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
+ "assert_cmd",
  "chrono",
  "clap",
  "cometindex",
  "ethnum",
+ "http 1.2.0",
  "num-bigint",
  "penumbra-sdk-app",
  "penumbra-sdk-asset",
@@ -6292,11 +6314,18 @@ dependencies = [
  "penumbra-sdk-sct",
  "penumbra-sdk-shielded-pool",
  "penumbra-sdk-stake",
+ "penumbra-sdk-transaction",
+ "predicates 2.1.5",
  "prost 0.13.4",
+ "prost-reflect",
+ "reqwest 0.12.9",
+ "rstest",
+ "serde",
  "serde_json",
  "sqlx",
  "tokio",
  "tracing",
+ "url",
 ]
 
 [[package]]
@@ -6367,7 +6396,7 @@ dependencies = [
 
 [[package]]
 name = "pmonitor"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -6389,6 +6418,7 @@ dependencies = [
  "penumbra-sdk-stake",
  "penumbra-sdk-tct",
  "penumbra-sdk-view",
+ "process-compose-openapi-client",
  "regex",
  "rustls 0.23.21",
  "serde",
@@ -6652,6 +6682,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "process-compose-openapi-client"
+version = "1.40.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5fe1021aa3ae3cb55ce80be3ff0f4f16cf0726d5c8af5c99fd6fc1a2985ba056"
+dependencies = [
+ "prettyplease",
+ "progenitor",
+ "progenitor-client",
+ "reqwest 0.12.9",
+ "serde",
+ "serde_json",
+ "syn 2.0.96",
+]
+
+[[package]]
 name = "procfs"
 version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6671,6 +6716,72 @@ checksum = "239df02d8349b06fc07398a3a1697b06418223b1c7725085e801e7c0fc6a12ec"
 dependencies = [
  "bitflags 2.8.0",
  "hex",
+]
+
+[[package]]
+name = "progenitor"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "293df5b79211fbf0c1ebad6513ba451d267e9c15f5f19ee5d3da775e2dd27331"
+dependencies = [
+ "progenitor-client",
+ "progenitor-impl",
+ "progenitor-macro",
+]
+
+[[package]]
+name = "progenitor-client"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d4a5db54eac3cae7007a0785854bc3e89fd418cca7dfc2207b99b43979154c1b"
+dependencies = [
+ "bytes",
+ "futures-core",
+ "percent-encoding",
+ "reqwest 0.12.9",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+]
+
+[[package]]
+name = "progenitor-impl"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d85934a440963a69f9f04f48507ff6e7aa2952a5b2d8f96cc37fa3dd5c270f66"
+dependencies = [
+ "heck 0.5.0",
+ "http 1.2.0",
+ "indexmap 2.7.1",
+ "openapiv3",
+ "proc-macro2 1.0.93",
+ "quote",
+ "regex",
+ "schemars",
+ "serde",
+ "serde_json",
+ "syn 2.0.96",
+ "thiserror 1.0.69",
+ "typify",
+ "unicode-ident",
+]
+
+[[package]]
+name = "progenitor-macro"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d99a5a259e2d65a4933054aa51717c70b6aba0522695731ac354a522124efc9b"
+dependencies = [
+ "openapiv3",
+ "proc-macro2 1.0.93",
+ "progenitor-impl",
+ "quote",
+ "schemars",
+ "serde",
+ "serde_json",
+ "serde_tokenstream",
+ "serde_yaml",
+ "syn 2.0.96",
 ]
 
 [[package]]
@@ -7053,6 +7164,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
+name = "regress"
+version = "0.10.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "78ef7fa9ed0256d64a688a3747d0fef7a88851c18a5e1d57f115f38ec2e09366"
+dependencies = [
+ "hashbrown 0.15.2",
+ "memchr",
+]
+
+[[package]]
+name = "relative-path"
+version = "1.9.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
+
+[[package]]
 name = "reqwest"
 version = "0.11.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7095,9 +7222,9 @@ dependencies = [
 
 [[package]]
 name = "reqwest"
-version = "0.12.12"
+version = "0.12.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43e734407157c3c2034e0258f5e4473ddb361b1e85f95a66690d67264d7cd1da"
+checksum = "a77c62af46e79de0a562e1a9849205ffcb7fc1238876e9bd743357570e04046f"
 dependencies = [
  "base64 0.22.1",
  "bytes",
@@ -7129,8 +7256,7 @@ dependencies = [
  "system-configuration 0.6.1",
  "tokio",
  "tokio-native-tls",
- "tokio-util 0.7.13",
- "tower 0.5.2",
+ "tokio-util 0.7.11",
  "tower-service",
  "url",
  "wasm-bindgen",
@@ -7228,6 +7354,36 @@ dependencies = [
  "spki",
  "subtle",
  "zeroize",
+]
+
+[[package]]
+name = "rstest"
+version = "0.24.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03e905296805ab93e13c1ec3a03f4b6c4f35e9498a3d5fa96dc626d22c03cd89"
+dependencies = [
+ "futures-timer",
+ "futures-util",
+ "rstest_macros",
+ "rustc_version",
+]
+
+[[package]]
+name = "rstest_macros"
+version = "0.24.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef0053bbffce09062bee4bcc499b0fbe7a57b879f1efe088d6d8d4c7adcdef9b"
+dependencies = [
+ "cfg-if",
+ "glob",
+ "proc-macro-crate",
+ "proc-macro2 1.0.93",
+ "quote",
+ "regex",
+ "relative-path",
+ "rustc_version",
+ "syn 2.0.96",
+ "unicode-ident",
 ]
 
 [[package]]
@@ -7529,6 +7685,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "schemars"
+version = "0.8.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09c024468a378b7e36765cd36702b7a90cc3cba11654f6685c8f233408e89e92"
+dependencies = [
+ "chrono",
+ "dyn-clone",
+ "schemars_derive",
+ "serde",
+ "serde_json",
+ "uuid",
+]
+
+[[package]]
+name = "schemars_derive"
+version = "0.8.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1eee588578aff73f856ab961cd2f79e36bc45d7ded33a7562adba4667aecc0e"
+dependencies = [
+ "proc-macro2 1.0.93",
+ "quote",
+ "serde_derive_internals",
+ "syn 2.0.96",
+]
+
+[[package]]
 name = "scopeguard"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7597,7 +7779,10 @@ dependencies = [
 name = "semver"
 version = "1.0.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f79dfe2d285b0488816f30e700a7438c5a73d816b5b7d3ac72fbc48b0d185e03"
+checksum = "61697e0a1c7e512e84a621326239844a24d8207b4669b41bc18b32ea5cbf988b"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "serde"
@@ -7629,10 +7814,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_json"
-version = "1.0.137"
+name = "serde_derive_internals"
+version = "0.29.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "930cfb6e6abf99298aaad7d29abbef7a9999a9a8806a40088f55f0dcec03146b"
+checksum = "18d26a20a969b9e3fdf2fc2d9f21eda6c40e2de84c9408bb5d3b05d499aae711"
+dependencies = [
+ "proc-macro2 1.0.93",
+ "quote",
+ "syn 2.0.96",
+]
+
+[[package]]
+name = "serde_json"
+version = "1.0.138"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d434192e7da787e94a6ea7e9670b26a036d0ca41e0b7efb2676dd32bae872949"
 dependencies = [
  "indexmap 2.7.1",
  "itoa",
@@ -7669,6 +7865,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "87607cb1398ed59d48732e575a4c28a7a8ebf2454b964fe3f224f2afc07909e1"
 dependencies = [
  "serde",
+]
+
+[[package]]
+name = "serde_tokenstream"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64060d864397305347a78851c51588fd283767e7e7589829e8121d65512340f1"
+dependencies = [
+ "proc-macro2 1.0.93",
+ "quote",
+ "serde",
+ "syn 2.0.96",
 ]
 
 [[package]]
@@ -7730,6 +7938,19 @@ dependencies = [
  "proc-macro2 1.0.93",
  "quote",
  "syn 2.0.96",
+]
+
+[[package]]
+name = "serde_yaml"
+version = "0.9.34+deprecated"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a8b1a1a2ebf674015cc02edccce75287f1a0130d394307b36743c2f5d504b47"
+dependencies = [
+ "indexmap 2.7.1",
+ "itoa",
+ "ryu",
+ "serde",
+ "unsafe-libyaml",
 ]
 
 [[package]]
@@ -7947,8 +8168,9 @@ dependencies = [
  "futures-intrusive",
  "futures-io",
  "futures-util",
- "hashbrown 0.15.2",
- "hashlink 0.10.0",
+ "hashbrown 0.14.5",
+ "hashlink",
+ "hex",
  "indexmap 2.7.1",
  "log",
  "memchr",
@@ -7960,7 +8182,8 @@ dependencies = [
  "serde_json",
  "sha2 0.10.8",
  "smallvec",
- "thiserror 2.0.11",
+ "sqlformat",
+ "thiserror 1.0.69",
  "tokio",
  "tokio-stream",
  "tracing",
@@ -8046,7 +8269,7 @@ dependencies = [
  "smallvec",
  "sqlx-core",
  "stringprep",
- "thiserror 2.0.11",
+ "thiserror 1.0.69",
  "tracing",
  "whoami",
 ]
@@ -8086,7 +8309,7 @@ dependencies = [
  "smallvec",
  "sqlx-core",
  "stringprep",
- "thiserror 2.0.11",
+ "thiserror 1.0.69",
  "tracing",
  "whoami",
 ]
@@ -8192,7 +8415,7 @@ checksum = "734676eb262c623cec13c3155096e08d1f8f29adce39ba17948b18dad1e54142"
 
 [[package]]
 name = "summonerd"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "ark-groth16",
@@ -9116,6 +9339,53 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
 
 [[package]]
+name = "typify"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b4c644dda9862f0fef3a570d8ddb3c2cfb1d5ac824a1f2ddfa7bc8f071a5ad8a"
+dependencies = [
+ "typify-impl",
+ "typify-macro",
+]
+
+[[package]]
+name = "typify-impl"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d59ab345b6c0d8ae9500b9ff334a4c7c0d316c1c628dc55726b95887eb8dbd11"
+dependencies = [
+ "heck 0.5.0",
+ "log",
+ "proc-macro2 1.0.93",
+ "quote",
+ "regress",
+ "schemars",
+ "semver",
+ "serde",
+ "serde_json",
+ "syn 2.0.96",
+ "thiserror 1.0.69",
+ "unicode-ident",
+]
+
+[[package]]
+name = "typify-macro"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "785e2cdcef0df8160fdd762ed548a637aaec1e83704fdbc14da0df66013ee8d0"
+dependencies = [
+ "proc-macro2 1.0.93",
+ "quote",
+ "schemars",
+ "semver",
+ "serde",
+ "serde_json",
+ "serde_tokenstream",
+ "syn 2.0.96",
+ "typify-impl",
+]
+
+[[package]]
 name = "uint"
 version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -9199,6 +9469,12 @@ dependencies = [
  "generic-array",
  "subtle",
 ]
+
+[[package]]
+name = "unsafe-libyaml"
+version = "0.2.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "673aac59facbab8a9007c7f6108d11f63b603f7cabff99fabf650fea5c32b861"
 
 [[package]]
 name = "untrusted"

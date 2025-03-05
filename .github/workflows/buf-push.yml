@@ -1,15 +1,21 @@
-name: Update protobuf docs
-# We want to rebuild on every commit to main, and also for named testnet tags,
-# so that API users can pick a tagged version of the protobuf definitions
-# to use against a matching testnet.
+name: protobuf
+# We're keeping the protodefs stable at v1, via buf lint checks on PRs.
+# Therefore it's safe to publish on every commit to main (and also tags).
 on:
   push:
     branches:
       - main
+      # Consider automatically publishing on upcoming protocol changes,
+      # to allow integration in downstream, e.g. web dependencies.
+      # - protocol/*
     tags:
       - '**'
+  # Also support ad-hoc calls for workflow
+  workflow_call:
+  workflow_dispatch:
+
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,6 +24,7 @@ jobs:
           buf_api_token: ${{ secrets.BUF_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           input: 'proto'
+
       - uses: bufbuild/buf-lint-action@v1
         with:
           input: 'proto'

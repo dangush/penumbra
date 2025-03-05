@@ -5,7 +5,6 @@ use cometindex::{
     AppView, PgTransaction,
 };
 use penumbra_sdk_asset::asset;
-use penumbra_sdk_dex::lp::position::{Id as PositionId, Position};
 use penumbra_sdk_dex::{
     event::{
         EventBatchSwap, EventCandlestickData, EventPositionClose, EventPositionExecution,
@@ -14,10 +13,15 @@ use penumbra_sdk_dex::{
     lp::Reserves,
     DirectedTradingPair, SwapExecution, TradingPair,
 };
+use penumbra_sdk_dex::{
+    event::{EventSwap, EventSwapClaim},
+    lp::position::{Id as PositionId, Position},
+};
 use penumbra_sdk_num::Amount;
 use penumbra_sdk_proto::event::EventDomainType;
 use penumbra_sdk_proto::DomainType;
 use penumbra_sdk_sct::event::EventBlockRoot;
+use penumbra_sdk_transaction::Transaction;
 use sqlx::types::BigDecimal;
 use sqlx::Row;
 use std::collections::{BTreeMap, HashMap, HashSet};
@@ -480,8 +484,8 @@ mod summary {
         now AS (
             SELECT price, liquidity            
             FROM snapshots
-            WHERE time >= $3
-            ORDER BY time ASC
+            WHERE time <= $3
+            ORDER BY time DESC
             LIMIT 1
         ),
         sums AS (
@@ -546,6 +550,7 @@ mod summary {
                 SELECT asset_start as asset, price
                 FROM dex_ex_pairs_summary
                 WHERE asset_end = $1
+                AND liquidity >= $2
                 UNION VALUES ($1, 1.0)
             ),
             converted_pairs_summary AS (
@@ -668,6 +673,16 @@ struct PairMetrics {
     liquidity_change: f64,
 }
 
+#[derive(Debug, Clone, serde::Serialize)]
+struct BatchSwapSummary {
+    asset_start: asset::Id,
+    asset_end: asset::Id,
+    input: Amount,
+    output: Amount,
+    num_swaps: i32,
+    price_float: f64,
+}
+
 #[derive(Debug)]
 struct Events {
     time: Option<DateTime>,
@@ -682,6 +697,8 @@ struct Events {
     position_closes: Vec<EventPositionClose>,
     position_withdrawals: Vec<EventPositionWithdraw>,
     batch_swaps: Vec<EventBatchSwap>,
+    swaps: BTreeMap<TradingPair, Vec<EventSwap>>,
+    swap_claims: BTreeMap<TradingPair, Vec<EventSwapClaim>>,
     // Track transaction hashes by position ID
     position_open_txs: BTreeMap<PositionId, [u8; 32]>,
     position_close_txs: BTreeMap<PositionId, [u8; 32]>,
@@ -701,6 +718,8 @@ impl Events {
             position_closes: Vec::new(),
             position_withdrawals: Vec::new(),
             batch_swaps: Vec::new(),
+            swaps: BTreeMap::new(),
+            swap_claims: BTreeMap::new(),
             position_open_txs: BTreeMap::new(),
             position_close_txs: BTreeMap::new(),
             position_withdrawal_txs: BTreeMap::new(),
@@ -777,9 +796,9 @@ impl Events {
 
     pub fn extract(block: &BlockEvents) -> anyhow::Result<Self> {
         let mut out = Self::new();
-        out.height = block.height as i32;
+        out.height = block.height() as i32;
 
-        for event in &block.events {
+        for event in block.events() {
             if let Ok(e) = EventCandlestickData::try_from_event(&event.event) {
                 let candle = Candle::from_candlestick_data(&e.stick);
                 out.with_candle(e.pair, candle);
@@ -799,7 +818,7 @@ impl Events {
                     },
                     false,
                 );
-                if let Some(tx_hash) = event.tx_hash {
+                if let Some(tx_hash) = event.tx_hash() {
                     out.position_open_txs.insert(e.position_id, tx_hash);
                 }
                 // A newly opened position might be executed against in this block,
@@ -819,7 +838,7 @@ impl Events {
                     },
                     true,
                 );
-                if let Some(tx_hash) = event.tx_hash {
+                if let Some(tx_hash) = event.tx_hash() {
                     out.position_withdrawal_txs.insert(e.position_id, tx_hash);
                 }
                 out.position_withdrawals.push(e);
@@ -854,11 +873,21 @@ impl Events {
             } else if let Ok(e) = EventQueuePositionClose::try_from_event(&event.event) {
                 // The position close event is emitted by the dex module at EOB,
                 // so we need to track it with the tx hash of the closure tx.
-                if let Some(tx_hash) = event.tx_hash {
+                if let Some(tx_hash) = event.tx_hash() {
                     out.position_close_txs.insert(e.position_id, tx_hash);
                 }
             } else if let Ok(e) = EventBatchSwap::try_from_event(&event.event) {
                 out.batch_swaps.push(e);
+            } else if let Ok(e) = EventSwap::try_from_event(&event.event) {
+                out.swaps
+                    .entry(e.trading_pair)
+                    .or_insert_with(Vec::new)
+                    .push(e);
+            } else if let Ok(e) = EventSwapClaim::try_from_event(&event.event) {
+                out.swap_claims
+                    .entry(e.trading_pair)
+                    .or_insert_with(Vec::new)
+                    .push(e);
             }
         }
         Ok(out)
@@ -1081,6 +1110,108 @@ impl Component {
         Ok(())
     }
 
+    async fn record_block_summary(
+        &self,
+        dbtx: &mut PgTransaction<'_>,
+        time: DateTime,
+        height: i32,
+        events: &Events,
+    ) -> anyhow::Result<()> {
+        let num_opened_lps = events.position_opens.len() as i32;
+        let num_closed_lps = events.position_closes.len() as i32;
+        let num_withdrawn_lps = events.position_withdrawals.len() as i32;
+        let num_swaps = events.swaps.iter().map(|(_, v)| v.len()).sum::<usize>() as i32;
+        let num_swap_claims = events
+            .swap_claims
+            .iter()
+            .map(|(_, v)| v.len())
+            .sum::<usize>() as i32;
+        let num_txs = events.batch_swaps.len() as i32;
+
+        let mut batch_swap_summaries = Vec::<BatchSwapSummary>::new();
+
+        for event in &events.batch_swaps {
+            let trading_pair = event.batch_swap_output_data.trading_pair;
+
+            if let Some(swap_1_2) = &event.swap_execution_1_for_2 {
+                let asset_start = swap_1_2.input.asset_id;
+                let asset_end = swap_1_2.output.asset_id;
+                let input = swap_1_2.input.amount;
+                let output = swap_1_2.output.amount;
+                let price_float = (output.value() as f64) / (input.value() as f64);
+
+                let empty_vec = vec![];
+                let swaps_for_pair = events.swaps.get(&trading_pair).unwrap_or(&empty_vec);
+                let filtered_swaps: Vec<_> = swaps_for_pair
+                    .iter()
+                    .filter(|swap| swap.delta_1_i != Amount::zero())
+                    .collect::<Vec<_>>();
+                let num_swaps = filtered_swaps.len() as i32;
+
+                batch_swap_summaries.push(BatchSwapSummary {
+                    asset_start,
+                    asset_end,
+                    input,
+                    output,
+                    num_swaps,
+                    price_float,
+                });
+            }
+
+            if let Some(swap_2_1) = &event.swap_execution_2_for_1 {
+                let asset_start = swap_2_1.input.asset_id;
+                let asset_end = swap_2_1.output.asset_id;
+                let input = swap_2_1.input.amount;
+                let output = swap_2_1.output.amount;
+                let price_float = (output.value() as f64) / (input.value() as f64);
+
+                let empty_vec = vec![];
+                let swaps_for_pair = events.swaps.get(&trading_pair).unwrap_or(&empty_vec);
+                let filtered_swaps: Vec<_> = swaps_for_pair
+                    .iter()
+                    .filter(|swap| swap.delta_2_i != Amount::zero())
+                    .collect::<Vec<_>>();
+                let num_swaps = filtered_swaps.len() as i32;
+
+                batch_swap_summaries.push(BatchSwapSummary {
+                    asset_start,
+                    asset_end,
+                    input,
+                    output,
+                    num_swaps,
+                    price_float,
+                });
+            }
+        }
+
+        sqlx::query(
+            "INSERT INTO dex_ex_block_summary (
+            height,
+            time,
+            batch_swaps,
+            num_open_lps,
+            num_closed_lps,
+            num_withdrawn_lps,
+            num_swaps,
+            num_swap_claims,
+            num_txs
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+        )
+        .bind(height)
+        .bind(time)
+        .bind(serde_json::to_value(&batch_swap_summaries)?)
+        .bind(num_opened_lps)
+        .bind(num_closed_lps)
+        .bind(num_withdrawn_lps)
+        .bind(num_swaps)
+        .bind(num_swap_claims)
+        .bind(num_txs)
+        .execute(dbtx.as_mut())
+        .await?;
+
+        Ok(())
+    }
+
     async fn record_batch_swap_traces(
         &self,
         dbtx: &mut PgTransaction<'_>,
@@ -1266,6 +1397,51 @@ impl Component {
 
         Ok(())
     }
+
+    async fn record_transaction(
+        &self,
+        dbtx: &mut PgTransaction<'_>,
+        time: DateTime,
+        height: u64,
+        transaction_id: [u8; 32],
+        transaction: Transaction,
+    ) -> anyhow::Result<()> {
+        if transaction.transaction_body.actions.is_empty() {
+            return Ok(());
+        }
+        sqlx::query(
+            "INSERT INTO dex_ex_transactions (
+                transaction_id,
+                transaction,
+                height,
+                time
+            ) VALUES ($1, $2, $3, $4)
+            ",
+        )
+        .bind(transaction_id)
+        .bind(transaction.encode_to_vec())
+        .bind(i32::try_from(height)?)
+        .bind(time)
+        .execute(dbtx.as_mut())
+        .await?;
+
+        Ok(())
+    }
+
+    async fn record_all_transactions(
+        &self,
+        dbtx: &mut PgTransaction<'_>,
+        time: DateTime,
+        block: &BlockEvents,
+    ) -> anyhow::Result<()> {
+        for (tx_id, tx_bytes) in block.transactions() {
+            let tx = Transaction::try_from(tx_bytes)?;
+            let height = block.height();
+            self.record_transaction(dbtx, time, height, tx_id, tx)
+                .await?;
+        }
+        Ok(())
+    }
 }
 
 #[async_trait]
@@ -1294,19 +1470,25 @@ impl AppView for Component {
         let mut charts = HashMap::new();
         let mut snapshots = HashMap::new();
         let mut last_time = None;
-        for block in batch.by_height.iter() {
+        for block in batch.events_by_block() {
             let mut events = Events::extract(&block)?;
             let time = events
                 .time
-                .expect(&format!("no block root event at height {}", block.height));
+                .expect(&format!("no block root event at height {}", block.height()));
             last_time = Some(time);
+
+            self.record_all_transactions(dbtx, time, block).await?;
 
             // Load any missing positions before processing events
             events.load_positions(dbtx).await?;
 
+            // This is where we are going to build the block summary for the DEX.
+            self.record_block_summary(dbtx, time, block.height() as i32, &events)
+                .await?;
+
             // Record batch swap execution traces.
             for event in &events.batch_swaps {
-                self.record_batch_swap_traces(dbtx, time, block.height as i32, event)
+                self.record_batch_swap_traces(dbtx, time, block.height() as i32, event)
                     .await?;
             }
 
