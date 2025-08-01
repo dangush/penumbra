@@ -1716,14 +1716,10 @@ version = "0.11.0"
 source = "git+https://github.com/informalsystems/decaf377-rdsa.git#06b9b353675ba4b8152cfb01b7972763e5eed5bb"
 dependencies = [
  "ark-ff",
- "ark-serialize",
  "blake2b_simd 0.5.11",
  "decaf377",
  "digest 0.9.0",
  "hex",
- "rand_core",
- "serde",
- "thiserror",
  "zeroize",
 ]
 
@@ -5305,25 +5301,21 @@ dependencies = [
  "decaf377-fmd",
  "decaf377-rdsa",
  "futures",
- "hex",
  "http-body",
  "ibc-proto",
  "ibc-types",
- "ics23",
  "pbjson",
  "pbjson-types",
  "pin-project",
  "prost",
  "serde",
  "serde_json",
- "subtle-encoding",
  "tendermint",
  "tendermint-proto",
  "tendermint-rpc",
  "thiserror",
  "tonic",
  "tower",
- "tracing",
 ]
 
 [[package]]
