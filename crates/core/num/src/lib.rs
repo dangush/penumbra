@@ -3,4 +3,6 @@
 mod amount;
 pub mod fixpoint;
 
-pub use amount::{Amount, AmountVar};
+pub use amount::Amount;
+#[cfg(feature = "r1cs")]
+pub use amount::AmountVar;
