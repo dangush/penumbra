@@ -11,6 +11,7 @@ use ark_serialize::CanonicalDeserialize;
 use decaf377::Fq;
 use f4jumble::{f4jumble, f4jumble_inv};
 use penumbra_proto::{penumbra::core::keys::v1 as pb, serializers::bech32str, DomainType};
+#[cfg(feature = "rand")]
 use rand::{CryptoRng, Rng};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -173,6 +174,7 @@ impl Address {
     }
 
     /// Generates a randomized dummy address.
+    #[cfg(feature = "rand")]
     pub fn dummy<R: CryptoRng + Rng>(rng: &mut R) -> Self {
         loop {
             let mut diversifier_bytes = [0u8; 16];

@@ -8,6 +8,7 @@ use aes::Aes128;
 use anyhow::Context;
 use derivative::Derivative;
 use penumbra_proto::{penumbra::core::keys::v1 as pb, DomainType};
+#[cfg(feature = "rand")]
 use rand::{CryptoRng, RngCore};
 use serde::{Deserialize, Serialize};
 
@@ -155,6 +156,7 @@ impl AddressIndex {
         AddressIndex::from(account)
     }
 
+    #[cfg(feature = "rand")]
     pub fn new_ephemeral<R: RngCore + CryptoRng>(account: u32, mut rng: R) -> Self {
         let mut bytes = [0u8; 12];
 
