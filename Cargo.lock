@@ -4596,18 +4596,11 @@ dependencies = [
  "ark-serialize",
  "ark-std",
  "base64 0.21.7",
- "bech32",
  "blake2b_simd 1.0.2",
- "bytes",
  "decaf377",
  "decaf377-fmd",
  "decaf377-rdsa",
- "derivative",
- "ethnum",
  "getrandom",
- "hex",
- "ibig",
- "num-bigint",
  "once_cell",
  "pbjson-types",
  "penumbra-num",
@@ -4620,9 +4613,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_with",
- "sha2 0.10.8",
  "thiserror",
- "tracing",
 ]
 
 [[package]]
