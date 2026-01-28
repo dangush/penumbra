@@ -2,6 +2,7 @@ use ark_ff::{One, Zero};
 use decaf377::{Element, Fr};
 pub use frost_core::{Ciphersuite, Field, FieldError, Group, GroupError};
 use rand_core;
+use serde::{Deserialize, Serialize};
 
 use crate::hash::Hasher;
 
@@ -80,7 +81,7 @@ impl Group for Decaf377Group {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Serialize, Deserialize)]
 pub struct Decaf377Rdsa;
 
 #[allow(non_snake_case)]

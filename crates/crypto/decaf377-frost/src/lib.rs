@@ -9,6 +9,7 @@
 use anyhow::anyhow;
 use frost_core::frost;
 use penumbra_sdk_proto::crypto::decaf377_frost::v1 as pb;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::collections::{BTreeMap, HashMap};
 
 /// A FROST-related error.
@@ -132,6 +133,37 @@ impl SigningPackage {
         self.0
             .signing_commitment(identifier)
             .map(round1::SigningCommitments)
+    }
+}
+
+impl Serialize for SigningPackage {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let bytes = self.0.serialize().map_err(serde::ser::Error::custom)?;
+        // Serialize as hex string for human-readable formats
+        if serializer.is_human_readable() {
+            hex::encode(&bytes).serialize(serializer)
+        } else {
+            serializer.serialize_bytes(&bytes)
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for SigningPackage {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let bytes = if deserializer.is_human_readable() {
+            let hex_str = <String>::deserialize(deserializer)?;
+            hex::decode(&hex_str).map_err(serde::de::Error::custom)?
+        } else {
+            <Vec<u8>>::deserialize(deserializer)?
+        };
+        let inner = frost::SigningPackage::deserialize(&bytes).map_err(serde::de::Error::custom)?;
+        Ok(Self(inner))
     }
 }
 
