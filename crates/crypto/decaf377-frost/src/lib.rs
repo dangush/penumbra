@@ -91,13 +91,13 @@ pub mod round1 {
         pub fn serialize(&self) -> Result<Vec<u8>, Error> {
             self.0.serialize()
         }
-    
+
         /// Deserialize from bytes
         pub fn deserialize(bytes: &[u8]) -> Result<Self, Error> {
             frost::round1::SigningNonces::deserialize(bytes).map(Self)
         }
     }
-    
+
     impl Serialize for SigningNonces {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
@@ -111,7 +111,7 @@ pub mod round1 {
             }
         }
     }
-    
+
     impl<'de> Deserialize<'de> for SigningNonces {
         fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
