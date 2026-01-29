@@ -1,6 +1,8 @@
 use ark_ff::{One, Zero};
 use decaf377::{Element, Fr};
+use frost_core::Scalar;
 pub use frost_core::{Ciphersuite, Field, FieldError, Group, GroupError};
+use frost_rerandomized::RandomizedCiphersuite;
 use rand_core;
 use serde::{Deserialize, Serialize};
 
@@ -123,5 +125,16 @@ impl Ciphersuite for Decaf377Rdsa {
 
     fn HID(m: &[u8]) -> Option<<<Self::Group as Group>::Field as Field>::Scalar> {
         Some(Hasher::default().update(b"id").update(m).finalize_scalar())
+    }
+}
+
+impl RandomizedCiphersuite for Decaf377Rdsa {
+    fn hash_randomizer(m: &[u8]) -> Option<Scalar<Self>> {
+        Some(
+            Hasher::default()
+                .update(b"randomizer")
+                .update(m)
+                .finalize_scalar(),
+        )
     }
 }

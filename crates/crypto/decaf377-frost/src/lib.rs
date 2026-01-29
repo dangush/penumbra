@@ -7,7 +7,7 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
 use anyhow::anyhow;
-use frost_core::frost;
+use frost_core as frost;
 use penumbra_sdk_proto::crypto::decaf377_frost::v1 as pb;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::collections::{BTreeMap, HashMap};
@@ -34,18 +34,59 @@ pub type Identifier = frost::Identifier<E>;
 
 /// Signing round 1 functionality and types.
 pub mod round1 {
-    use penumbra_sdk_proto::DomainType;
-
     use crate::keys::SigningShare;
+    use penumbra_sdk_proto::DomainType;
 
     use super::*;
 
+    // pub type SigningNonces = frost::round1::SigningNonces<E>;
+
     /// The nonces used for a single FROST signing ceremony.
+    /// Published by each participant in the first round of the signing protocol.
     ///
     /// Note that [`SigningNonces`] must be used *only once* for a signing
     /// operation; re-using nonces will result in leakage of a signer's long-lived
     /// signing key.
-    pub type SigningNonces = frost::round1::SigningNonces<E>;
+    #[derive(Debug, Clone)]
+    pub struct SigningNonces(pub(crate) frost::round1::SigningNonces<E>);
+
+    impl From<SigningNonces> for pb::SigningNonces {
+        fn from(value: SigningNonces) -> Self {
+            Self {
+                hiding: Some(pb::Nonce {
+                    scalar: value.0.hiding().serialize(),
+                }),
+                binding: Some(pb::Nonce {
+                    scalar: value.0.binding().serialize(),
+                }),
+            }
+        }
+    }
+
+    impl TryFrom<pb::SigningNonces> for SigningNonces {
+        type Error = anyhow::Error;
+
+        fn try_from(value: pb::SigningNonces) -> Result<Self, Self::Error> {
+            Ok(Self(frost::round1::SigningNonces::from_nonces(
+                frost::round1::Nonce::deserialize(
+                    value
+                        .hiding
+                        .ok_or(anyhow!("SigningNonces missing hiding"))?
+                        .scalar,
+                )?,
+                frost::round1::Nonce::deserialize(
+                    value
+                        .binding
+                        .ok_or(anyhow!("SigningNonces missing binding"))?
+                        .scalar,
+                )?,
+            )))
+        }
+    }
+
+    impl DomainType for SigningNonces {
+        type Proto = pb::SigningNonces;
+    }
 
     /// Published by each participant in the first round of the signing protocol.
     ///
@@ -101,7 +142,7 @@ pub mod round1 {
         RNG: CryptoRng + RngCore,
     {
         let (a, b) = frost::round1::commit::<E, RNG>(secret, rng);
-        (a, SigningCommitments(b))
+        (SigningNonces(a), SigningCommitments(b))
     }
 }
 
@@ -214,7 +255,7 @@ pub mod round2 {
         signer_nonces: &round1::SigningNonces,
         key_package: &keys::KeyPackage,
     ) -> Result<SignatureShare, Error> {
-        frost::round2::sign(&signing_package.0, signer_nonces, key_package).map(SignatureShare)
+        frost::round2::sign(&signing_package.0, &signer_nonces.0, key_package).map(SignatureShare)
     }
 
     /// Like [`sign`], but for producing signatures with a randomized verification key.
@@ -226,7 +267,7 @@ pub mod round2 {
     ) -> Result<SignatureShare, Error> {
         frost_rerandomized::sign(
             &signing_package.0,
-            signer_nonces,
+            &signer_nonces.0,
             key_package,
             Randomizer::from_scalar(randomizer),
         )
@@ -283,7 +324,7 @@ pub fn aggregate_randomized(
         &signature_shares,
         pubkeys,
         &frost_rerandomized::RandomizedParams::from_randomizer(
-            pubkeys.group_public(),
+            pubkeys.verifying_key(),
             frost_rerandomized::Randomizer::from_scalar(randomizer),
         ),
     )?;
