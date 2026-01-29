@@ -7,11 +7,17 @@ version = {workspace = true}
 license = {workspace = true}
 edition = {workspace = true}
 
+[features]
+rand = [
+    "decaf377/rand",
+    "decaf377-rdsa/rand",
+]
+
 [dependencies]
 anyhow             = { workspace = true }
 ark-ff             = { workspace = true, default-features = false }
 blake2b_simd       = { workspace = true }
-decaf377           = { workspace = true, features = ["arkworks", "rand"]}
+decaf377           = { workspace = true, features = ["rand", "arkworks"] }
 decaf377-rdsa      = { workspace = true}
 frost-core         = "1.0.0"
 frost-rerandomized = "1.0.0"
