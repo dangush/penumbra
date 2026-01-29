@@ -38,7 +38,7 @@ pub fn split<R: RngCore + CryptoRng>(
     rng: &mut R,
 ) -> Result<(BTreeMap<Identifier, SecretShare>, PublicKeyPackage), Error> {
     // https://github.com/ZcashFoundation/frost/issues/497
-    let frost_secret = frost_core::SigningKey::deserialize(secret.to_bytes().to_vec())?;
+    let frost_secret = frost_core::SigningKey::deserialize(&secret.to_bytes())?;
     frost::keys::split(&frost_secret, max_signers, min_signers, identifiers, rng)
 }
 

@@ -67,13 +67,13 @@ pub mod round1 {
         fn try_from(value: pb::SigningNonces) -> Result<Self, Self::Error> {
             Ok(Self(frost::round1::SigningNonces::from_nonces(
                 frost::round1::Nonce::deserialize(
-                    value
+                    &value
                         .hiding
                         .ok_or(anyhow!("SigningNonces missing hiding"))?
                         .scalar,
                 )?,
                 frost::round1::Nonce::deserialize(
-                    value
+                    &value
                         .binding
                         .ok_or(anyhow!("SigningNonces missing binding"))?
                         .scalar,
@@ -138,10 +138,10 @@ pub mod round1 {
         fn from(value: SigningCommitments) -> Self {
             Self {
                 hiding: Some(pb::NonceCommitment {
-                    element: value.0.hiding().serialize(),
+                    element: value.0.hiding().serialize().expect("serialization"),
                 }),
                 binding: Some(pb::NonceCommitment {
-                    element: value.0.binding().serialize(),
+                    element: value.0.binding().serialize().expect("serialization"),
                 }),
             }
         }
@@ -153,13 +153,13 @@ pub mod round1 {
         fn try_from(value: pb::SigningCommitments) -> Result<Self, Self::Error> {
             Ok(Self(frost::round1::SigningCommitments::new(
                 frost::round1::NonceCommitment::deserialize(
-                    value
+                    &value
                         .hiding
                         .ok_or(anyhow!("SigningCommitments missing hiding"))?
                         .element,
                 )?,
                 frost::round1::NonceCommitment::deserialize(
-                    value
+                    &value
                         .binding
                         .ok_or(anyhow!("SigningCommitments missing binding"))?
                         .element,
@@ -272,7 +272,7 @@ pub mod round2 {
 
         fn try_from(value: pb::SignatureShare) -> Result<Self, Self::Error> {
             Ok(Self(frost::round2::SignatureShare::deserialize(
-                value.scalar,
+                &value.scalar,
             )?))
         }
     }
@@ -341,7 +341,8 @@ pub fn aggregate(
         .map(|(a, b)| (*a, b.0.clone()))
         .collect();
     let frost_sig = frost::aggregate(&signing_package.0, &signature_shares, pubkeys)?;
-    Ok(TryInto::<[u8; 64]>::try_into(frost_sig.serialize())
+    let bytes = frost_sig.serialize()?;
+    Ok(TryInto::<[u8; 64]>::try_into(bytes)
         .expect("serialization is valid")
         .into())
 }
@@ -367,7 +368,8 @@ pub fn aggregate_randomized(
             frost_rerandomized::Randomizer::from_scalar(randomizer),
         ),
     )?;
-    Ok(TryInto::<[u8; 64]>::try_into(frost_sig.serialize())
+    let bytes = frost_sig.serialize()?;
+    Ok(TryInto::<[u8; 64]>::try_into(bytes)
         .expect("serialization is valid")
         .into())
 }

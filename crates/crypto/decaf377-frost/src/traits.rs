@@ -70,8 +70,8 @@ impl Group for Decaf377Group {
         decaf377::Element::GENERATOR
     }
 
-    fn serialize(element: &Self::Element) -> Self::Serialization {
-        element.vartime_compress().0.to_vec()
+    fn serialize(element: &Self::Element) -> Result<Self::Serialization, GroupError> {
+        Ok(element.vartime_compress().0.to_vec())
     }
 
     fn deserialize(buf: &Self::Serialization) -> Result<Self::Element, GroupError> {

@@ -107,8 +107,9 @@ fn simple_dkg_and_signing_flow() -> anyhow::Result<()> {
         .unwrap()
         .verifying_key()
         .serialize()
+        .expect("serialize should not fail")
         .try_into()
-        .expect("serialize should not fail");
+        .expect("serialization should be 32 bytes");
     let vk = VerificationKey::<SpendAuth>::try_from(vk_bytes)?;
 
     // Verify the signature
