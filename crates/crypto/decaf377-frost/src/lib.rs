@@ -39,8 +39,6 @@ pub mod round1 {
 
     use super::*;
 
-    // pub type SigningNonces = frost::round1::SigningNonces<E>;
-
     /// The nonces used for a single FROST signing ceremony.
     /// Published by each participant in the first round of the signing protocol.
     ///
@@ -86,6 +84,52 @@ pub mod round1 {
 
     impl DomainType for SigningNonces {
         type Proto = pb::SigningNonces;
+    }
+
+    impl SigningNonces {
+        /// Serialize to 64 bytes (hiding || binding)
+        pub fn to_bytes(&self) -> [u8; 64] {
+            let mut bytes = [0u8; 64];
+            bytes[..32].copy_from_slice(&self.0.hiding().serialize());
+            bytes[32..].copy_from_slice(&self.0.binding().serialize());
+            bytes
+        }
+    
+        /// Deserialize from 64 bytes
+        pub fn from_bytes(bytes: &[u8; 64]) -> Result<Self, Error> {
+            let hiding = frost::round1::Nonce::deserialize(bytes[..32].to_vec())?;
+            let binding = frost::round1::Nonce::deserialize(bytes[32..].to_vec())?;
+            Ok(Self(frost::round1::SigningNonces::from_nonces(hiding, binding)))
+        }
+    }
+
+    impl Serialize for SigningNonces {
+        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+        {
+            let bytes = self.to_bytes();
+            if serializer.is_human_readable() {
+                hex::encode(&bytes).serialize(serializer)
+            } else {
+                serializer.serialize_bytes(&bytes)
+            }
+        }
+    }
+    
+    impl<'de> Deserialize<'de> for SigningNonces {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            let bytes = if deserializer.is_human_readable() {
+                let hex_str = String::deserialize(deserializer)?;
+                hex::decode(&hex_str).map_err(serde::de::Error::custom)?
+            } else {
+                <Vec<u8>>::deserialize(deserializer)?
+            };
+            Self::from_bytes(bytes.as_slice()).map_err(serde::de::Error::custom)
+        }
     }
 
     /// Published by each participant in the first round of the signing protocol.
