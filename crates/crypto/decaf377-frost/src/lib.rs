@@ -87,19 +87,14 @@ pub mod round1 {
     }
 
     impl SigningNonces {
-        /// Serialize to 64 bytes (hiding || binding)
-        pub fn to_bytes(&self) -> [u8; 64] {
-            let mut bytes = [0u8; 64];
-            bytes[..32].copy_from_slice(&self.0.hiding().serialize());
-            bytes[32..].copy_from_slice(&self.0.binding().serialize());
-            bytes
+        /// Serialize to bytes
+        pub fn serialize(&self) -> Result<Vec<u8>, Error> {
+            self.0.serialize()
         }
-    
-        /// Deserialize from 64 bytes
-        pub fn from_bytes(bytes: &[u8; 64]) -> Result<Self, Error> {
-            let hiding = frost::round1::Nonce::deserialize(bytes[..32].to_vec())?;
-            let binding = frost::round1::Nonce::deserialize(bytes[32..].to_vec())?;
-            Ok(Self(frost::round1::SigningNonces::from_nonces(hiding, binding)))
+
+        /// Deserialize from bytes
+        pub fn deserialize(bytes: &[u8]) -> Result<Self, Error> {
+            frost::round1::SigningNonces::deserialize(bytes).map(Self)
         }
     }
 
@@ -108,7 +103,7 @@ pub mod round1 {
         where
             S: Serializer,
         {
-            let bytes = self.to_bytes();
+            let bytes = self.0.serialize().map_err(serde::ser::Error::custom)?;
             if serializer.is_human_readable() {
                 hex::encode(&bytes).serialize(serializer)
             } else {
@@ -116,7 +111,7 @@ pub mod round1 {
             }
         }
     }
-    
+
     impl<'de> Deserialize<'de> for SigningNonces {
         fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
@@ -128,7 +123,7 @@ pub mod round1 {
             } else {
                 <Vec<u8>>::deserialize(deserializer)?
             };
-            Self::from_bytes(bytes.as_slice()).map_err(serde::de::Error::custom)
+            Self::deserialize(&bytes).map_err(serde::de::Error::custom)
         }
     }
 
