@@ -18,9 +18,12 @@ anyhow             = { workspace = true }
 ark-ff             = { workspace = true, default-features = false }
 blake2b_simd       = { workspace = true }
 decaf377           = { workspace = true, features = ["rand", "arkworks"] }
-decaf377-rdsa      = { workspace = true }
-frost-core         = "0.7"
-frost-rerandomized = "0.7"
+decaf377-rdsa      = { workspace = true}
+frost-core         = "1.0.0"
+frost-rerandomized = "1.0.0"
 rand_core          = { workspace = true, features = ["getrandom"] }
 penumbra-sdk-proto = { workspace = true, default-features = true }
 getrandom          = { workspace = true, features = ["js"] }
+# serialization
+serde              = { workspace = true, features = ["derive"] }
+hex                = { workspace = true }

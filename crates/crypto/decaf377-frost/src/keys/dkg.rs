@@ -91,7 +91,7 @@ pub mod round2 {
         fn from(value: Package) -> Self {
             Self {
                 signing_share: Some(pb::SigningShare {
-                    scalar: value.0.secret_share().serialize(),
+                    scalar: value.0.signing_share().serialize(),
                 }),
             }
         }

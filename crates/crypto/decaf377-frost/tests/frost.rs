@@ -75,7 +75,7 @@ fn simple_dkg_and_signing_flow() -> anyhow::Result<()> {
     let mut sign_round1_nonces = HashMap::new();
 
     for id in &ids {
-        let (nonce, commitment) = frost::round1::commit(&shares[id].secret_share(), &mut OsRng);
+        let (nonce, commitment) = frost::round1::commit(&shares[id].signing_share(), &mut OsRng);
         signing_commitments.insert(*id, commitment);
         sign_round1_nonces.insert(*id, nonce);
     }
@@ -105,7 +105,7 @@ fn simple_dkg_and_signing_flow() -> anyhow::Result<()> {
         .values()
         .next()
         .unwrap()
-        .group_public()
+        .verifying_key()
         .serialize()
         .try_into()
         .expect("serialize should not fail");
@@ -120,7 +120,7 @@ fn simple_dkg_and_signing_flow() -> anyhow::Result<()> {
     let mut sign_round1_nonces = HashMap::new();
 
     for id in &ids {
-        let (nonce, commitment) = frost::round1::commit(&shares[id].secret_share(), &mut OsRng);
+        let (nonce, commitment) = frost::round1::commit(&shares[id].signing_share(), &mut OsRng);
         signing_commitments.insert(*id, commitment);
         sign_round1_nonces.insert(*id, nonce);
     }
