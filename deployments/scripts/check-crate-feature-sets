@@ -2,6 +2,8 @@
 # CI script to verify that each crate in the monorepo builds independently.
 # This helps us ensure that the feature-gating for e.g. "component" is
 # declared explicitly.
+#
+# For Cycles fork: only check crates that Cycles depends on (not full workspace)
 set -euo pipefail
 
 
@@ -10,4 +12,23 @@ if ! hash cargo-hack >/dev/null 2>&1 ; then
     exit 1
 fi
 
-cargo hack check --workspace --all-targets --all-features --release
+# Crates that Cycles protocol depends on
+packages=(
+    decaf377-fmd
+    decaf377-ka
+    penumbra-sdk-asset
+    penumbra-sdk-keys
+    penumbra-sdk-num
+    penumbra-sdk-proof-params
+    penumbra-sdk-proto
+    penumbra-sdk-sct
+    penumbra-sdk-shielded-pool
+    penumbra-sdk-tct
+)
+
+pkg_flags=""
+for p in "${packages[@]}"; do
+    pkg_flags="$pkg_flags -p $p"
+done
+
+cargo hack check $pkg_flags --all-targets --all-features --release
