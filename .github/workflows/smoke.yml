@@ -14,6 +14,8 @@ concurrency:
 
 jobs:
   smoke:
+    # Disabled for Cycles fork - requires full devnet setup and LFS assets for pd binary
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +42,8 @@ jobs:
         run: nix develop --command just smoke
 
   pmonitor:
+    # Disabled for Cycles fork - requires building pd/pcli/pmonitor binaries (needs LFS)
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
