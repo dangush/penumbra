@@ -51,7 +51,7 @@ jobs:
       # It's OK to install from crates, building from source, because the
       # rust-cache restore on the previous step reduces the install step to ~5s.
       - name: Install mdbook dependencies
-        run: cargo install mdbook mdbook-katex mdbook-mermaid mdbook-linkcheck
+        run: cargo install --locked mdbook mdbook-katex mdbook-mermaid mdbook-linkcheck
 
       - name: Build protocol docs
         run: cd docs/protocol && mdbook build
