@@ -7,6 +7,8 @@ on:
 
 jobs:
   rustdocs:
+    # Disabled for Cycles fork - we don't deploy rustdocs and this requires LFS + nightly
+    if: false
     # We use a custom script to generate the index page for https://rustdoc.penumbra.zone,
     # and refactors to rust deps can break that generation. Let's ensure this script exits 0
     # on PRs, but we'll still only deploy after merge into main.
