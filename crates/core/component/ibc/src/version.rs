@@ -1,6 +1,8 @@
+#[cfg(feature = "component")]
 use ibc_types::core::connection::Version;
 
 /// Selects a version from the intersection of locally supported and counterparty versions.
+#[cfg(feature = "component")]
 pub fn pick_connection_version(
     supported_versions: &[Version],
     counterparty_versions: &[Version],

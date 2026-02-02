@@ -5299,6 +5299,7 @@ dependencies = [
  "decaf377-fmd",
  "decaf377-rdsa",
  "getrandom",
+ "hex",
  "lazy_static",
  "once_cell",
  "pbjson-types",
