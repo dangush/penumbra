@@ -16,24 +16,25 @@ set -euo pipefail
 #
 # to make sure at least all of those crates are tracked here.
 
+# For Cycles fork: only check crates we directly depend on.
 packages=(
     penumbra-sdk-asset
-    penumbra-sdk-community-pool
-    penumbra-sdk-compact-block
-    penumbra-sdk-auction
-    penumbra-sdk-dex
-    penumbra-sdk-distributions
+#    penumbra-sdk-community-pool
+#    penumbra-sdk-compact-block
+#    penumbra-sdk-auction
+#    penumbra-sdk-dex
+#    penumbra-sdk-distributions
     penumbra-sdk-fee
-    penumbra-sdk-funding
-    penumbra-sdk-governance
-    penumbra-sdk-ibc
+#    penumbra-sdk-funding
+#    penumbra-sdk-governance
+#    penumbra-sdk-ibc
     penumbra-sdk-keys
     penumbra-sdk-sct
     penumbra-sdk-shielded-pool
-    penumbra-sdk-stake
+#    penumbra-sdk-stake
     penumbra-sdk-tct
-    penumbra-sdk-transaction
-    penumbra-sdk-txhash
+#    penumbra-sdk-transaction
+#    penumbra-sdk-txhash
     # N.B. we can't include those ones because they rely on `getrandom`,
     # but there's a `js` feature...
     # decaf377-fmd
