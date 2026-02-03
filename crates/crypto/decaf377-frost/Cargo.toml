@@ -13,7 +13,8 @@ ark-ff = {workspace = true, default-features = false}
 blake2b_simd = {workspace = true}
 decaf377 = {workspace = true}
 decaf377-rdsa = {workspace = true}
-frost-core = "0.7"
-frost-rerandomized = "0.7"
+# Pinned to exact versions - frost-core 2.x has breaking API changes
+frost-core = "=0.7.0"
+frost-rerandomized = "=0.7.0"
 rand_core = {workspace = true, features = ["getrandom"]}
 penumbra-sdk-proto = {workspace = true, default-features = true}

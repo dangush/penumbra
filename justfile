@@ -23,8 +23,8 @@ build:
 # Runs 'cargo check' on all rust files in the project.
 # For Cycles fork: exclude binary crates (require LFS) and custody (FROST threshold signing not used)
 check:
-  # check, failing on warnings (--locked ensures Cargo.lock is respected)
-  RUSTFLAGS="-D warnings" cargo check --locked --release --all-targets --all-features --target-dir=target/check \
+  # check, failing on warnings
+  RUSTFLAGS="-D warnings" cargo check --release --all-targets --all-features --target-dir=target/check \
     --workspace --exclude pd --exclude pcli --exclude pclientd --exclude pmonitor --exclude pindexer \
     --exclude penumbra-sdk-custody
   # fmt dry-run, failing on any suggestions
@@ -52,7 +52,7 @@ rustdocs:
 # Run rust unit tests, via cargo-nextest
 # For Cycles fork: exclude binary crates (require LFS) and custody (FROST threshold signing not used)
 test:
-  cargo nextest run --locked --release --workspace \
+  cargo nextest run --release --workspace \
     --exclude pd --exclude pcli --exclude pclientd --exclude pmonitor --exclude pindexer \
     --exclude penumbra-sdk-custody
 
