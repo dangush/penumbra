@@ -21,9 +21,11 @@ build:
     cargo build --release --all-features --all-targets
 
 # Runs 'cargo check' on all rust files in the project.
+# For Cycles fork: exclude binary crates that require LFS assets
 check:
   # check, failing on warnings
-  RUSTFLAGS="-D warnings" cargo check --release --all-targets --all-features --target-dir=target/check
+  RUSTFLAGS="-D warnings" cargo check --release --all-targets --all-features --target-dir=target/check \
+    --workspace --exclude pd --exclude pcli --exclude pclientd --exclude pmonitor --exclude pindexer
   # fmt dry-run, failing on any suggestions
   cargo fmt --all -- --check
 
