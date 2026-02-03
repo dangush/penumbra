@@ -1,6 +1,6 @@
-use ibc_types::core::{channel::ChannelId, client::Height as IbcHeight};
 #[cfg(feature = "component")]
 use ibc_types::core::channel::PortId;
+use ibc_types::core::{channel::ChannelId, client::Height as IbcHeight};
 use penumbra_sdk_asset::{
     asset::{self, Metadata},
     Balance, Value,
