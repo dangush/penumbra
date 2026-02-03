@@ -21,11 +21,12 @@ build:
     cargo build --release --all-features --all-targets
 
 # Runs 'cargo check' on all rust files in the project.
-# For Cycles fork: exclude binary crates that require LFS assets
+# For Cycles fork: exclude binary crates (require LFS) and custody (FROST threshold signing not used)
 check:
   # check, failing on warnings
   RUSTFLAGS="-D warnings" cargo check --release --all-targets --all-features --target-dir=target/check \
-    --workspace --exclude pd --exclude pcli --exclude pclientd --exclude pmonitor --exclude pindexer
+    --workspace --exclude pd --exclude pcli --exclude pclientd --exclude pmonitor --exclude pindexer \
+    --exclude penumbra-sdk-custody
   # fmt dry-run, failing on any suggestions
   cargo fmt --all -- --check
 
@@ -49,10 +50,11 @@ rustdocs:
     ./deployments/scripts/rust-docs
 
 # Run rust unit tests, via cargo-nextest
-# For Cycles fork: exclude binary crates that require LFS assets
+# For Cycles fork: exclude binary crates (require LFS) and custody (FROST threshold signing not used)
 test:
   cargo nextest run --release --workspace \
-    --exclude pd --exclude pcli --exclude pclientd --exclude pmonitor --exclude pindexer
+    --exclude pd --exclude pcli --exclude pclientd --exclude pmonitor --exclude pindexer \
+    --exclude penumbra-sdk-custody
 
 # Run integration tests against the testnet, for validating HTTPS support
 integration-testnet:
