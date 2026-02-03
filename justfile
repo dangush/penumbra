@@ -49,8 +49,10 @@ rustdocs:
     ./deployments/scripts/rust-docs
 
 # Run rust unit tests, via cargo-nextest
+# For Cycles fork: exclude binary crates that require LFS assets
 test:
-  cargo nextest run --release
+  cargo nextest run --release --workspace \
+    --exclude pd --exclude pcli --exclude pclientd --exclude pmonitor --exclude pindexer
 
 # Run integration tests against the testnet, for validating HTTPS support
 integration-testnet:
