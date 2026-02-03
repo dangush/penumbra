@@ -3,7 +3,9 @@
 #[cfg(feature = "component")]
 pub mod component;
 
+#[cfg(feature = "ibc")]
 pub mod ics20_withdrawal;
+#[cfg(feature = "ibc")]
 pub use ics20_withdrawal::Ics20Withdrawal;
 
 pub mod event;

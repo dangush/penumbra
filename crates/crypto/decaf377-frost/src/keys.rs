@@ -2,7 +2,7 @@
 
 use decaf377_rdsa::{SigningKey, SpendAuth};
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use rand_core::RngCore;
 
@@ -20,7 +20,7 @@ pub fn generate_with_dealer<RNG: RngCore + CryptoRng>(
     min_signers: u16,
     identifiers: IdentifierList,
     mut rng: RNG,
-) -> Result<(HashMap<Identifier, SecretShare>, PublicKeyPackage), Error> {
+) -> Result<(BTreeMap<Identifier, SecretShare>, PublicKeyPackage), Error> {
     frost::keys::generate_with_dealer(max_signers, min_signers, identifiers, &mut rng)
 }
 
@@ -36,9 +36,9 @@ pub fn split<R: RngCore + CryptoRng>(
     min_signers: u16,
     identifiers: IdentifierList,
     rng: &mut R,
-) -> Result<(HashMap<Identifier, SecretShare>, PublicKeyPackage), Error> {
+) -> Result<(BTreeMap<Identifier, SecretShare>, PublicKeyPackage), Error> {
     // https://github.com/ZcashFoundation/frost/issues/497
-    let frost_secret = frost_core::SigningKey::deserialize(secret.to_bytes().to_vec())?;
+    let frost_secret = frost_core::SigningKey::deserialize(&secret.to_bytes())?;
     frost::keys::split(&frost_secret, max_signers, min_signers, identifiers, rng)
 }
 

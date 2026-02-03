@@ -70,6 +70,43 @@ impl ::prost::Name for DkgRound2Package {
         "/penumbra.crypto.decaf377_frost.v1.DKGRound2Package".into()
     }
 }
+/// A signing nonce, a scalar used once in the signing protocol.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Nonce {
+    /// These bytes should be a valid scalar.
+    #[prost(bytes = "vec", tag = "1")]
+    pub scalar: ::prost::alloc::vec::Vec<u8>,
+}
+impl ::prost::Name for Nonce {
+    const NAME: &'static str = "Nonce";
+    const PACKAGE: &'static str = "penumbra.crypto.decaf377_frost.v1";
+    fn full_name() -> ::prost::alloc::string::String {
+        "penumbra.crypto.decaf377_frost.v1.Nonce".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/penumbra.crypto.decaf377_frost.v1.Nonce".into()
+    }
+}
+/// The nonces used for a single FROST signing ceremony.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SigningNonces {
+    /// The hiding nonce.
+    #[prost(message, optional, tag = "1")]
+    pub hiding: ::core::option::Option<Nonce>,
+    /// The binding nonce.
+    #[prost(message, optional, tag = "2")]
+    pub binding: ::core::option::Option<Nonce>,
+}
+impl ::prost::Name for SigningNonces {
+    const NAME: &'static str = "SigningNonces";
+    const PACKAGE: &'static str = "penumbra.crypto.decaf377_frost.v1";
+    fn full_name() -> ::prost::alloc::string::String {
+        "penumbra.crypto.decaf377_frost.v1.SigningNonces".into()
+    }
+    fn type_url() -> ::prost::alloc::string::String {
+        "/penumbra.crypto.decaf377_frost.v1.SigningNonces".into()
+    }
+}
 /// Represents a commitment to a nonce value.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NonceCommitment {

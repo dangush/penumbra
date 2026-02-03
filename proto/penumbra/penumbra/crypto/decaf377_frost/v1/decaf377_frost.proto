@@ -28,6 +28,20 @@ message DKGRound2Package {
   SigningShare signing_share = 1;
 }
 
+// A signing nonce, a scalar used once in the signing protocol.
+message Nonce {
+  // These bytes should be a valid scalar.
+  bytes scalar = 1;
+}
+
+// The nonces used for a single FROST signing ceremony.
+message SigningNonces {
+  // The hiding nonce.
+  Nonce hiding = 1;
+  // The binding nonce.
+  Nonce binding = 2;
+}
+
 // Represents a commitment to a nonce value.
 message NonceCommitment {
   // These bytes should be a valid group element.

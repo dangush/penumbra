@@ -75,7 +75,7 @@ fn simple_dkg_and_signing_flow() -> anyhow::Result<()> {
     let mut sign_round1_nonces = HashMap::new();
 
     for id in &ids {
-        let (nonce, commitment) = frost::round1::commit(&shares[id].secret_share(), &mut OsRng);
+        let (nonce, commitment) = frost::round1::commit(&shares[id].signing_share(), &mut OsRng);
         signing_commitments.insert(*id, commitment);
         sign_round1_nonces.insert(*id, nonce);
     }
@@ -105,10 +105,11 @@ fn simple_dkg_and_signing_flow() -> anyhow::Result<()> {
         .values()
         .next()
         .unwrap()
-        .group_public()
+        .verifying_key()
         .serialize()
+        .expect("serialize should not fail")
         .try_into()
-        .expect("serialize should not fail");
+        .expect("serialization should be 32 bytes");
     let vk = VerificationKey::<SpendAuth>::try_from(vk_bytes)?;
 
     // Verify the signature
@@ -120,7 +121,7 @@ fn simple_dkg_and_signing_flow() -> anyhow::Result<()> {
     let mut sign_round1_nonces = HashMap::new();
 
     for id in &ids {
-        let (nonce, commitment) = frost::round1::commit(&shares[id].secret_share(), &mut OsRng);
+        let (nonce, commitment) = frost::round1::commit(&shares[id].signing_share(), &mut OsRng);
         signing_commitments.insert(*id, commitment);
         sign_round1_nonces.insert(*id, nonce);
     }

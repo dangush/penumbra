@@ -33,11 +33,13 @@ pub mod round1 {
                         .0
                         .commitment()
                         .serialize()
-                        .into_iter()
-                        .map(|x| x.to_vec())
-                        .collect(),
+                        .expect("VSS commitment serialization is valid"),
                 }),
-                proof_of_knowledge: value.0.proof_of_knowledge().serialize().to_vec(),
+                proof_of_knowledge: value
+                    .0
+                    .proof_of_knowledge()
+                    .serialize()
+                    .expect("proof of knowledge serialization is valid"),
             }
         }
     }
@@ -53,7 +55,7 @@ pub mod round1 {
                         .ok_or(anyhow!("DkgRound1Package missing commitment"))?
                         .elements,
                 )?,
-                frost_core::Signature::deserialize(value.proof_of_knowledge)?,
+                frost_core::Signature::deserialize(&value.proof_of_knowledge)?,
             )))
         }
     }
@@ -91,7 +93,7 @@ pub mod round2 {
         fn from(value: Package) -> Self {
             Self {
                 signing_share: Some(pb::SigningShare {
-                    scalar: value.0.secret_share().serialize(),
+                    scalar: value.0.signing_share().serialize(),
                 }),
             }
         }
@@ -103,7 +105,7 @@ pub mod round2 {
         fn try_from(value: pb::DkgRound2Package) -> Result<Self, Self::Error> {
             Ok(Self(frost::keys::dkg::round2::Package::new(
                 frost::keys::SigningShare::deserialize(
-                    value
+                    &value
                         .signing_share
                         .ok_or(anyhow!("DkgRound2Package missing signing share"))?
                         .scalar,
