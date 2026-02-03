@@ -39,6 +39,8 @@ jobs:
   # Also validate that the `mdbook` docs (guide & protocol) build correctly.
   # In particular, links are checked within the docs.
   mdbook:
+    # Disabled for Cycles fork - mdbook-mermaid requires edition2024 (not stable in Cargo 1.83)
+    if: false
     # Downgrading runner size to 4vcpu, since we're not compiling code.
     runs-on: ubuntu-latest
     steps:
