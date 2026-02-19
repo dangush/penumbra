@@ -1,3 +1,5 @@
+// Required for `type_url()` method resolution on generic associated types
+#[allow(unused_imports)]
 use crate::Name;
 use std::convert::{From, TryFrom};
 

@@ -1,9 +1,10 @@
 use ark_ec::pairing::Pairing;
-use ark_groth16::{
-    r1cs_to_qap::LibsnarkReduction, Groth16, PreparedVerifyingKey, ProvingKey, VerifyingKey,
-};
+#[cfg(feature = "rand")]
+use ark_groth16::{r1cs_to_qap::LibsnarkReduction, Groth16};
+use ark_groth16::{PreparedVerifyingKey, ProvingKey, VerifyingKey};
 use ark_relations::r1cs::{self, ConstraintMatrices, ConstraintSynthesizer};
 use ark_serialize::CanonicalSerialize;
+#[cfg(feature = "rand")]
 use ark_snark::SNARK;
 use decaf377::Bls12_377;
 #[cfg(feature = "rand")]
