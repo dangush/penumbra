@@ -211,6 +211,105 @@ impl<'de> serde::Deserialize<'de> for DkgRound2Package {
         deserializer.deserialize_struct("penumbra.crypto.decaf377_frost.v1.DKGRound2Package", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for Nonce {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.scalar.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("penumbra.crypto.decaf377_frost.v1.Nonce", len)?;
+        if !self.scalar.is_empty() {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("scalar", pbjson::private::base64::encode(&self.scalar).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for Nonce {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "scalar",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Scalar,
+            __SkipField__,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "scalar" => Ok(GeneratedField::Scalar),
+                            _ => Ok(GeneratedField::__SkipField__),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = Nonce;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct penumbra.crypto.decaf377_frost.v1.Nonce")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<Nonce, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut scalar__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Scalar => {
+                            if scalar__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("scalar"));
+                            }
+                            scalar__ = 
+                                Some(map_.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::__SkipField__ => {
+                            let _ = map_.next_value::<serde::de::IgnoredAny>()?;
+                        }
+                    }
+                }
+                Ok(Nonce {
+                    scalar: scalar__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("penumbra.crypto.decaf377_frost.v1.Nonce", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for NonceCommitment {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -519,6 +618,118 @@ impl<'de> serde::Deserialize<'de> for SigningCommitments {
             }
         }
         deserializer.deserialize_struct("penumbra.crypto.decaf377_frost.v1.SigningCommitments", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for SigningNonces {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.hiding.is_some() {
+            len += 1;
+        }
+        if self.binding.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("penumbra.crypto.decaf377_frost.v1.SigningNonces", len)?;
+        if let Some(v) = self.hiding.as_ref() {
+            struct_ser.serialize_field("hiding", v)?;
+        }
+        if let Some(v) = self.binding.as_ref() {
+            struct_ser.serialize_field("binding", v)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for SigningNonces {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "hiding",
+            "binding",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Hiding,
+            Binding,
+            __SkipField__,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "hiding" => Ok(GeneratedField::Hiding),
+                            "binding" => Ok(GeneratedField::Binding),
+                            _ => Ok(GeneratedField::__SkipField__),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = SigningNonces;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct penumbra.crypto.decaf377_frost.v1.SigningNonces")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SigningNonces, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut hiding__ = None;
+                let mut binding__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Hiding => {
+                            if hiding__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("hiding"));
+                            }
+                            hiding__ = map_.next_value()?;
+                        }
+                        GeneratedField::Binding => {
+                            if binding__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("binding"));
+                            }
+                            binding__ = map_.next_value()?;
+                        }
+                        GeneratedField::__SkipField__ => {
+                            let _ = map_.next_value::<serde::de::IgnoredAny>()?;
+                        }
+                    }
+                }
+                Ok(SigningNonces {
+                    hiding: hiding__,
+                    binding: binding__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("penumbra.crypto.decaf377_frost.v1.SigningNonces", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for SigningShare {

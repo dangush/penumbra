@@ -7,13 +7,24 @@ version = {workspace = true}
 license = {workspace = true}
 edition = {workspace = true}
 
+[features]
+rand = [
+    "decaf377/rand",
+    "decaf377-rdsa/rand",
+]
+
 [dependencies]
-anyhow = {workspace = true}
-ark-ff = {workspace = true, default-features = false}
-blake2b_simd = {workspace = true}
-decaf377 = {workspace = true}
-decaf377-rdsa = {workspace = true}
-frost-core = "0.7"
-frost-rerandomized = "0.7"
-rand_core = {workspace = true, features = ["getrandom"]}
-penumbra-sdk-proto = {workspace = true, default-features = true}
+anyhow             = { workspace = true }
+ark-ff             = { workspace = true, default-features = false }
+blake2b_simd       = { workspace = true }
+decaf377           = { workspace = true, features = ["rand", "arkworks"] }
+decaf377-rdsa      = { workspace = true}
+# Pinned to exact versions to prevent breaking API changes
+frost-core         = "=2.2.0"
+frost-rerandomized = "=2.2.0"
+rand_core          = { workspace = true, features = ["getrandom"] }
+penumbra-sdk-proto = { workspace = true, default-features = true }
+getrandom          = { workspace = true, features = ["js"] }
+# serialization
+serde              = { workspace = true, features = ["derive"] }
+hex                = { workspace = true }
