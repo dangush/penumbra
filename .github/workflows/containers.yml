@@ -12,7 +12,9 @@ on:
   workflow_dispatch:
 jobs:
   penumbra:
-    runs-on: buildjet-16vcpu-ubuntu-2204
+    # Disabled for Cycles fork - update image path to ghcr.io/informalsystems/penumbra when needed
+    if: false
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write

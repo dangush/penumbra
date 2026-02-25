@@ -68,7 +68,7 @@ impl TryFrom<asset::Metadata> for UnbondingToken {
         // and VALIDATOR_IDENTITY_BECH32_PREFIX
         // The data capture group is used by asset::REGISTRY
         let captures =
-            Regex::new("^uunbonding_(?P<data>start_at_(?P<start>[0-9]+)_(?P<validator>penumbravalid1[a-zA-HJ-NP-Z0-9]+))$")
+            Regex::new("^uunbonding_(?P<data>start_at_(?P<start>[0-9]+)_(?P<validator>cyclesvalid1[a-zA-HJ-NP-Z0-9]+))$")
                 .expect("regex is valid")
                 .captures(base_string.as_ref())
                 .ok_or_else(|| {

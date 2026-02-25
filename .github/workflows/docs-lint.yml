@@ -7,10 +7,12 @@ on:
 
 jobs:
   rustdocs:
+    # Disabled for Cycles fork - we don't deploy rustdocs and this requires LFS + nightly
+    if: false
     # We use a custom script to generate the index page for https://rustdoc.penumbra.zone,
     # and refactors to rust deps can break that generation. Let's ensure this script exits 0
     # on PRs, but we'll still only deploy after merge into main.
-    runs-on: buildjet-8vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,8 +39,10 @@ jobs:
   # Also validate that the `mdbook` docs (guide & protocol) build correctly.
   # In particular, links are checked within the docs.
   mdbook:
+    # Disabled for Cycles fork - mdbook-mermaid requires edition2024 (not stable in Cargo 1.83)
+    if: false
     # Downgrading runner size to 4vcpu, since we're not compiling code.
-    runs-on: buildjet-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -51,7 +55,7 @@ jobs:
       # It's OK to install from crates, building from source, because the
       # rust-cache restore on the previous step reduces the install step to ~5s.
       - name: Install mdbook dependencies
-        run: cargo install mdbook mdbook-katex mdbook-mermaid mdbook-linkcheck
+        run: cargo install --locked mdbook mdbook-katex mdbook-mermaid mdbook-linkcheck
 
       - name: Build protocol docs
         run: cd docs/protocol && mdbook build
