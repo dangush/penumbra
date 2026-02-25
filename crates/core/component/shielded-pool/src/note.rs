@@ -148,7 +148,7 @@ impl Note {
                     .ok_or_else(|| anyhow::anyhow!("invalid denomination"))?
                     .id(),
             },
-            Rseed([0u8; 32]),
+            Rseed::from([0u8; 32]),
         )
         .map_err(Into::into)
     }
@@ -431,7 +431,7 @@ impl TryFrom<pb::Note> for Note {
             .value
             .ok_or_else(|| anyhow::anyhow!("missing value"))?
             .try_into()?;
-        let rseed = Rseed(msg.rseed.as_slice().try_into()?);
+        let rseed = Rseed::from(msg.rseed.as_slice());
 
         Ok(Note::from_parts(address, value, rseed)?)
     }
@@ -468,7 +468,7 @@ impl TryFrom<pb::NoteView> for NoteView {
             .value
             .ok_or_else(|| anyhow::anyhow!("missing value"))?
             .try_into()?;
-        let rseed = Rseed(msg.rseed.as_slice().try_into()?);
+        let rseed = Rseed::from(msg.rseed.as_slice());
 
         Ok(NoteView {
             address,
@@ -535,7 +535,7 @@ impl TryFrom<&[u8]> for Note {
                         .map_err(|_| Error::NoteDeserializationError)?,
                 ),
             },
-            Rseed(rseed_bytes),
+            Rseed::from(rseed_bytes),
         )
     }
 }
