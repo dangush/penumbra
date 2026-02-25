@@ -2,6 +2,7 @@ use decaf377::{Fq, Fr};
 use decaf377_ka as ka;
 use once_cell::sync::Lazy;
 use penumbra_sdk_keys::prf;
+#[cfg(feature = "rand")]
 use rand::{CryptoRng, RngCore};
 
 pub static RCM_DOMAIN_SEP: Lazy<Fq> =
@@ -13,6 +14,7 @@ pub struct Rseed(pub Fq);
 
 impl Rseed {
     /// Generate a new rseed from a random source.
+    #[cfg(feature = "rand")]
     pub fn generate<R: RngCore + CryptoRng>(rng: &mut R) -> Self {
         let mut bytes = [0u8; 32];
         rng.fill_bytes(&mut bytes);

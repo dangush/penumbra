@@ -21,6 +21,7 @@ tendermint = [
     "dep:thiserror",
     "dep:tonic",
 ]
+ibc = ["dep:ibc-types", "dep:thiserror"]
 
 [dependencies]
 anyhow = {workspace = true}
@@ -29,13 +30,13 @@ bech32 = {workspace = true}
 bytes = {workspace = true, features = ["serde"]}
 chrono = {workspace = true, optional = true, default-features = false, features = ["serde"]}
 cnidarium = {workspace = true, optional = true, default-features = true, features = ["rpc"]}
-decaf377-fmd = {workspace = true}
-decaf377-rdsa = {workspace = true}
+decaf377-fmd = {workspace = true, default-features = false}
+decaf377-rdsa = {workspace = true, default-features = false, features = ["serde"]}
 futures = {workspace = true}
 hex = {workspace = true}
 http-body = {workspace = true, optional = true}
 http-body-util = {workspace = true, optional = true}
-ibc-types = {workspace = true, features = ["std"], default-features = true}
+ibc-types = {workspace = true, optional = true, features = ["std"], default-features = true}
 ics23 = {workspace = true}
 pbjson = {workspace = true}
 pbjson-types = {workspace = true}

@@ -1,11 +1,13 @@
 use ark_ec::pairing::Pairing;
-use ark_groth16::{
-    r1cs_to_qap::LibsnarkReduction, Groth16, PreparedVerifyingKey, ProvingKey, VerifyingKey,
-};
+#[cfg(feature = "rand")]
+use ark_groth16::{r1cs_to_qap::LibsnarkReduction, Groth16};
+use ark_groth16::{PreparedVerifyingKey, ProvingKey, VerifyingKey};
 use ark_relations::r1cs::{self, ConstraintMatrices, ConstraintSynthesizer};
 use ark_serialize::CanonicalSerialize;
+#[cfg(feature = "rand")]
 use ark_snark::SNARK;
 use decaf377::Bls12_377;
+#[cfg(feature = "rand")]
 use rand_core::CryptoRngCore;
 
 /// This trait characterizes circuits which can generate constraints.
@@ -46,6 +48,7 @@ pub fn generate_constraint_matrices<T: DummyWitness>(
 ///
 /// These parameters should not be used for actual production code,
 /// because the randomness may not have been securely destroyed.
+#[cfg(feature = "rand")]
 pub fn generate_test_parameters<T: DummyWitness>(
     rng: &mut impl CryptoRngCore,
 ) -> (ProvingKey<Bls12_377>, VerifyingKey<Bls12_377>) {
@@ -60,6 +63,7 @@ pub fn generate_test_parameters<T: DummyWitness>(
 
 /// A variant of `generate_test_parameters` which spits out a verifying key with some
 /// precomputation.
+#[cfg(feature = "rand")]
 pub fn generate_prepared_test_parameters<T: DummyWitness>(
     rng: &mut impl CryptoRngCore,
 ) -> (ProvingKey<Bls12_377>, PreparedVerifyingKey<Bls12_377>) {

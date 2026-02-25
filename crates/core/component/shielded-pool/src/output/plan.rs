@@ -7,6 +7,7 @@ use penumbra_sdk_keys::{
     Address, PayloadKey,
 };
 use penumbra_sdk_proto::{core::component::shielded_pool::v1 as pb, DomainType};
+#[cfg(feature = "rand")]
 use rand_core::{CryptoRng, RngCore};
 use serde::{Deserialize, Serialize};
 
@@ -27,6 +28,7 @@ pub struct OutputPlan {
 
 impl OutputPlan {
     /// Create a new [`OutputPlan`] that sends `value` to `dest_address`.
+    #[cfg(feature = "rand")]
     pub fn new<R: RngCore + CryptoRng>(
         rng: &mut R,
         value: Value,
@@ -45,6 +47,7 @@ impl OutputPlan {
     }
 
     /// Create a dummy [`OutputPlan`].
+    #[cfg(feature = "rand")]
     pub fn dummy<R: CryptoRng + RngCore>(rng: &mut R) -> OutputPlan {
         let dummy_address = Address::dummy(rng);
         Self::new(
@@ -158,7 +161,7 @@ impl TryFrom<pb::OutputPlan> for OutputPlan {
                 .dest_address
                 .ok_or_else(|| anyhow::anyhow!("missing address"))?
                 .try_into()?,
-            rseed: Rseed(msg.rseed.as_slice().try_into()?),
+            rseed: Rseed::from(msg.rseed.as_slice()),
             value_blinding: Fr::from_bytes_checked(msg.value_blinding.as_slice().try_into()?)
                 .expect("value_blinding malformed"),
             proof_blinding_r: Fq::from_bytes_checked(msg.proof_blinding_r.as_slice().try_into()?)
@@ -194,7 +197,7 @@ mod test {
         let dummy_memo_key: PayloadKey = [0; 32].into();
 
         let value: Value = "1234.02penumbra".parse().unwrap();
-        let dest_address = "penumbra1rqcd3hfvkvc04c4c9vc0ac87lh4y0z8l28k4xp6d0cnd5jc6f6k0neuzp6zdwtpwyfpswtdzv9jzqtpjn5t6wh96pfx3flq2dhqgc42u7c06kj57dl39w2xm6tg0wh4zc8kjjk".parse().unwrap();
+        let dest_address = penumbra_sdk_keys::test_keys::ADDRESS_0.clone();
 
         let output_plan = OutputPlan::new(&mut rng, value, dest_address);
         let blinding_factor = output_plan.value_blinding;

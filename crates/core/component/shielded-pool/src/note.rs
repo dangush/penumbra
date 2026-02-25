@@ -12,11 +12,14 @@ use penumbra_sdk_keys::{
     Address, AddressView,
 };
 use penumbra_sdk_proto::penumbra::core::component::shielded_pool::v1 as pb;
+#[cfg(feature = "rand")]
 use rand::{CryptoRng, Rng};
 use serde::{Deserialize, Serialize};
 use thiserror;
 
+#[cfg(feature = "r1cs")]
 mod r1cs;
+#[cfg(feature = "r1cs")]
 pub use r1cs::NoteVar;
 
 pub use penumbra_sdk_tct::StateCommitment;
@@ -173,6 +176,7 @@ impl Note {
 
     /// Generate a fresh note representing the given value for the given destination address, with a
     /// random blinding factor.
+    #[cfg(feature = "rand")]
     pub fn generate(rng: &mut (impl Rng + CryptoRng), address: &Address, value: Value) -> Self {
         let rseed = Rseed::generate(rng);
         Note::from_parts(address.clone(), value, rseed)
